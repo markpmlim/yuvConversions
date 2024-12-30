@@ -57,47 +57,7 @@ func readYUV422(_ pathname: String, _ width: Int, _ height: Int) -> [vImage_Buff
     fread(uPlane, 1, chromaSize, file)
     // Read the v plane
     fread(vPlane, 1, chromaSize, file)
-/*
-    let pixelBufferAttributes = [
-        kCVPixelBufferMetalCompatibilityKey as String : true,
-        ] as CFDictionary
-    var planeWidths = [Int(width), Int(width/2), Int(width/2)]
-    var planeHeights = [Int(height), Int(height), Int(height)]
-    var bytesPerRows = [width, width/2, width/2]
-    var baseAddresses: [UnsafeMutableRawPointer?] = [yPlane, uPlane, vPlane]
-    // Create a CVPixelBuffer with 3 planes.
-    var pixelBuffer: CVPixelBuffer? = nil
-    // No direct support for planes if the pixel format is yuv422 (422yCbCr)
-    // There is no CVPlanarPixelBufferInfo_YCbCrPlanar struct
-    // kCVPixelFormatType_422YpCbCr8BiPlanarFullRange - not available yet
-    // kCVPixelFormatType_422YpCbCr8 - 2vuy (ordered Cb Y'0 Cr Y'1)
-    // kCVPixelFormatType_422YpCbCr8_yuvs - yuvs (ordered Y'0 Cb Y'1 Cr)
-    // kCVPixelFormatType_422YpCbCr8FullRange - yuvf (ordered Y'0 Cb Y'1 Cr)
-    var status = CVPixelBufferCreateWithPlanarBytes(
-        kCFAllocatorDefault,
-        Int(width),
-        Int(height),
-        kCVPixelFormatType_422YpCbCr8,  // 2vuy
-        nil,
-        0,
-        3,
-        &baseAddresses,
-        &planeWidths,
-        &planeHeights,
-        &bytesPerRows,
-        { releaseRefCon, dataPtr, dataSize, numberOfPlanes, planeAddresses  in
-            planeAddresses?[0]?.deallocate()
-            planeAddresses?[1]?.deallocate()
-            planeAddresses?[2]?.deallocate()
-    },
-        nil,
-        nil,
-        &pixelBuffer
-    )
-    //<Plane 0 width=640 height=640 bytesPerRow=640>
-    //<Plane 1 width=320 height=640 bytesPerRow=320>
-    //<Plane 2 width=320 height=640 bytesPerRow=320>
-*/
+
     let yBuffer = try! vImage_Buffer(width: width,
                                      height: height,
                                      bitsPerPixel: 8)
@@ -127,10 +87,12 @@ else {
     fatalError("File not found")
 }
 
-let srcBuffers = readYUV422(pathname, width, height)!
-
 let width = 640
 let height = 640
+guard let srcBuffers = readYUV422(pathname, width, height)
+else {
+    fatalError("The array of source buffers is nil")
+}
 let  yBuffer = srcBuffers[0]
 let cbBuffer = srcBuffers[1]
 let crBuffer = srcBuffers[2]
@@ -200,7 +162,7 @@ memcpy(uvBuffer.data,
        cbCrBuffer.rowBytes*height)
 
 // Do a visual check to show data from `cbCrBuffer` have been copied to `uvBuffer`.
-var bufferPtr = uvBuffer.data.assumingMemoryBound(to: UInt8.self)
+var bufferPtr = cbCrBuffer.data.assumingMemoryBound(to: UInt8.self)
 for i in 0 ..< 2 * 4 {
     print(String(format: "0x%02X", bufferPtr[i]), terminator: " ")
 }

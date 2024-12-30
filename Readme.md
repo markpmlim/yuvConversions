@@ -24,4 +24,8 @@ XCode 11.6, macOS 10.15
 <br />
 <br />
 
-**References:**
+**Weblinks:**
+
+https://yuvviewer.com/
+
+https://developer.apple.com/documentation/accelerate/1533042-vimageconvert_planartochunky8

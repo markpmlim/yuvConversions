@@ -16,6 +16,13 @@ One can also instantiate texture objects from the raw yuv files (planar and non-
 
 How about playing a movie encoded in yuv format since each frame is basically an image?
 
+<br />
+<br />
+
+**ffmpeg** supports a variety of multimedia formats. The yuv files used by the demos of this playground is a tiny set of the pixel formats transcoded by *ffmpeg*.
+
+<br />
+<br />
 
 **Development Platform:**
 
@@ -29,3 +36,5 @@ XCode 11.6, macOS 10.15
 https://yuvviewer.com/
 
 https://developer.apple.com/documentation/accelerate/1533042-vimageconvert_planartochunky8
+
+https://en.wikipedia.org/wiki/FFmpeg
